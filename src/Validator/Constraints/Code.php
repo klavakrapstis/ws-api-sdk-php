@@ -6,6 +6,9 @@ use Symfony\Component\Validator\Constraints\Regex;
 /**
  * Class Code
  * @package IsignApiBundle
+ *
+ * @Annotation
+ * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
 class Code extends Regex
 {
