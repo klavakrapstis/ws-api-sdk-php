@@ -1,7 +1,6 @@
 <?php
 namespace Isign;
 
-use GuzzleHttp\Subscriber\Log\LogSubscriber;
 use Isign\Exception;
 use Isign\Exception\InvalidApiKey;
 use Isign\Http\ClientInterface;
@@ -9,6 +8,9 @@ use Isign\Http\GuzzleClientAdapter;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\MessageFormatter;
 
 /**
  * ISIGN.io API client
@@ -45,7 +47,7 @@ class Client
      *     'url' => 'https://api2.isign.io',
      *     'sandboxUrl' => 'https://developers.isign.io',
      * ]
-     * @param LoggerInterface|callable|resource|null $log Logger used to log
+     * @param LoggerInterface|null $logger Logger used to log
      *     messages. Pass a LoggerInterface to use a PSR-3 logger. Pass a
      *     callable to log messages to a function that accepts a string of
      *     data. Pass a resource returned from ``fopen()`` to log to an open
@@ -53,13 +55,24 @@ class Client
      *     ``echo()``.
      * @return self
      */
-    public static function create(array $options = [], $log = false)
+    public static function create(array $options = [], LoggerInterface $logger = null)
     {
         $client = new \GuzzleHttp\Client();
 
-        if ($log !== false) {
-            $subscriber = new LogSubscriber($log);
-            $client->getEmitter()->attach($subscriber);
+        if ($logger !== null) {
+            $stack = HandlerStack::create();
+            $stack->push(
+                Middleware::log(
+                    $logger,
+                    new MessageFormatter('{req_body} - {res_body}')
+                )
+            );
+
+            $client = new \GuzzleHttp\Client(
+                [
+                    'handler' => $stack,
+                ]
+            );
         }
 
         return new self(
@@ -190,7 +203,7 @@ class Client
      * @param string $method
      * @param string $url
      * @param array $fields
-     * @return Array
+     * @return array
      */
     private function request($method, $url, array $fields)
     {
@@ -199,7 +212,7 @@ class Client
             'query' => [
                 'access_token' => $this->getApiKey()
             ],
-            'body' => $fields,
+            'form_params' => $fields,
         ];
 
         return $this->client->sendRequest($method, $url, $options);
