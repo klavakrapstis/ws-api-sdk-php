@@ -14,10 +14,10 @@
     bootstrap                   = "vendor/autoload.php"
     mapTestClassNameToCoveredClassName = "true"
     forceCoversAnnotation        = "false">
-    
+
     <php>
         <!-- For integration tests -->
-        <const name="SANDBOX_API_KEY" value="test_labadiena"/>
+        <const name="SANDBOX_API_KEY" value=""/>
         <const name="SANDBOX_URL" value="https://developers.isign.io"/>
         <const name="TIMEOUT" value="20"/>
         <const name="PHONE" value="+37060000007"/>
