@@ -2,8 +2,6 @@
 namespace Isign\Tests\Integration;
 
 use Isign\Client;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
 
 /**
  * Base test case
@@ -24,7 +22,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
             $params['sandboxUrl'] = SANDBOX_URL;
         }
 
-        $log = false;
+        $log = null;
         // Uncomment to enable request/response debugging
         // $log = null;
 
