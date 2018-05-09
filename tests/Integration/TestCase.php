@@ -24,7 +24,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $log = null;
         // Uncomment to enable request/response debugging
-        // $log = null;
+        // $log = new \Monolog\Logger('test');
+        // $log->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout'));
 
         $this->client = Client::create($params, $log);
     }
