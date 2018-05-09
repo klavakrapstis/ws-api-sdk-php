@@ -48,11 +48,8 @@ class Client
      *     'sandboxUrl' => 'https://developers.isign.io',
      * ]
      * @param LoggerInterface|null $logger Logger used to log
-     *     messages. Pass a LoggerInterface to use a PSR-3 logger. Pass a
-     *     callable to log messages to a function that accepts a string of
-     *     data. Pass a resource returned from ``fopen()`` to log to an open
-     *     resource. Pass null or leave empty to write log messages using
-     *     ``echo()``.
+     *     messages. Pass a LoggerInterface to use a PSR-3 logger.
+     *     Pass null or leave empty to disable logging.
      * @return self
      */
     public static function create(array $options = [], LoggerInterface $logger = null)
@@ -64,7 +61,7 @@ class Client
             $stack->push(
                 Middleware::log(
                     $logger,
-                    new MessageFormatter('{req_body} - {res_body}')
+                    new MessageFormatter()
                 )
             );
 
@@ -212,7 +209,7 @@ class Client
             'query' => [
                 'access_token' => $this->getApiKey()
             ],
-            'form_params' => $fields,
+            'json' => $fields,
         ];
 
         return $this->client->sendRequest($method, $url, $options);
